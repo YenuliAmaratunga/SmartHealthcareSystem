@@ -60,10 +60,6 @@ const Doctor = new mongoose.Schema({
   },
 
 
-  image: { 
-    type: String, 
-    default: null 
-  },
 
   doctorFee: { 
     type: Number, 
