@@ -11,7 +11,8 @@ const BookDoctor = new mongoose.Schema({
     sessionTime : {type : String,required : true},
     hospitalFee : {type : Number, default : 1500},
     onlineBookingFee : {type : Number , default : 200},
-    totalAmount : {type : Number}
+    totalAmount : {type : Number},
+    apointmentNumber : {type : Number}
 
 },{timestamps : true});
 
