@@ -15,6 +15,7 @@ import {
   getRevenueByDoctor
 } from "../controllers/appointmentsController.js";
 import { getStaffActivity } from "../controllers/staffController.js";
+import { createReportLog, getReportLogs } from "../controllers/reportLogController.js";
 
 const router = express.Router();
 
@@ -40,6 +41,7 @@ router.get("/revenue-by-doctor", getRevenueByDoctor);
 // staff
 router.get("/staff-activity", getStaffActivity);// ?from&to
 
-
+router.post("/report-logs", createReportLog);
+router.get("/report-logs", getReportLogs);
 
 export default router;
