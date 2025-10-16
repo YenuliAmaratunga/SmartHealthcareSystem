@@ -7,7 +7,6 @@ router.get('/getSessionsByName/:doctorName',doctorSession.readSessionByDoctorNam
 router.get('/getSessionBySpecialization/:specialization',doctorSession.readSessionBySpecialization);
 router.get('/filterSession',doctorSession.querySessions);
 router.put('/reserveSlot',doctorSession.reserveSlot);
-router.get("/fetchByNameAndSpecialization", doctorSession.fetchByNameAndSpecialization);
 
 
 
