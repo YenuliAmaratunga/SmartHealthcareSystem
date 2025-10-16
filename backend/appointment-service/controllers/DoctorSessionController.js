@@ -204,8 +204,8 @@ exports.reserveSlot = async (req, res) => {
       return hours * 60 + minutes;
     };
 
-    const [reqHours, reqMinutes] = time.split(':').map(Number);
-    const requestedMinutes = reqHours * 60 + reqMinutes;
+    const requestedMinutes = toMinutes(time); // reuse same parser as session times
+
 
     // 4. Find matching session
     const session = sessions.find(s => {
@@ -325,7 +325,8 @@ exports.fetchByNameAndSpecialization = async (req, res) => {
     // Find all sessions for those doctors
     const meetups = await DocorMeetups.find({
       doctorId: { $in: doctorIds },
-    }).populate("doctorId", "doctorName specialization");
+    }).populate("doctorId", "_id doctorName specialization");
+
 
     if (!meetups.length) {
       return res
@@ -343,6 +344,7 @@ exports.fetchByNameAndSpecialization = async (req, res) => {
           allSessions.push({
             doctorName: meetup.doctorId.doctorName,
             specialization: meetup.doctorId.specialization,
+            doctorId: meetup.doctorId?._id || meetup.doctorId,
             day,
             date: session.date,
             startTime: session.startTime,
