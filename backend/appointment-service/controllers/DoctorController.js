@@ -51,10 +51,16 @@ exports.getDoctorByName = async(req,res) => {
 
     const {doctorName }= req.params;
 
-    const doctor = await Doctor.findOne({doctorName: { $regex: doctorName, $options: "i" },});
+    const doctors = await Doctor.find(
+      { doctorName: { $regex: doctorName, $options: "i" } },
+      "_id doctorName specialization"
+    );
 
-    if(!doctor) res.status(404).json({message : `Doctor ${doctorName} Not Found`});
-    res.status(201).json(doctor);
+    if (!doctors.length) {
+      return res.status(404).json([]);
+    }
+
+    res.status(200).json(doctors);
 
     }catch(err){
 

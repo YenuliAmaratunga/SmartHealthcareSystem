@@ -1,9 +1,17 @@
+import { Routes, Route } from "react-router-dom";
+import SchAppointments from "./pages/SchAppointments";
+import AvailabilityResults from "./pages/AvailabilityResults";
+
+
+
 export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <h1 className="text-4xl font-bold text-blue-600">
-        Hello Hospital360 👋
-      </h1>
-    </div>
+    <Routes>
+     
+      <Route path = "/scheduleAppointments" element = {<SchAppointments/>}/>
+      <Route path="/availability" element = {<AvailabilityResults/>}/>
+   
+ 
+    </Routes>
   );
 }
