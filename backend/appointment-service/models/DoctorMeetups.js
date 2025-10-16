@@ -11,7 +11,8 @@ const DoctorMeetups = new mongoose.Schema({
         date : {type : Date, required : true},
         startTime: { type: String, required: true }, 
         endTime: { type: String, required: true },   
-        maxPatients: { type: Number, required: true, min: 1 }
+        maxPatients: { type: Number, required: true, min: 1 },
+        availableSlots : {type : Number, default: function () { return this.maxPatients; }}
       }
     ],
     Tuesday: [
@@ -19,7 +20,9 @@ const DoctorMeetups = new mongoose.Schema({
         date : {type : Date, required : true},
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
-        maxPatients: { type: Number, required: true, min: 1 }
+        maxPatients: { type: Number, required: true, min: 1 },
+        availableSlots : {type : Number, default: function () { return this.maxPatients; }
+      }
       }
     ],
     Wednesday: [
@@ -28,7 +31,8 @@ const DoctorMeetups = new mongoose.Schema({
         date : {type : Date, required : true},
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
-        maxPatients: { type: Number, required: true, min: 1 }
+        maxPatients: { type: Number, required: true, min: 1 },
+        availableSlots : {type : Number, default: function () { return this.maxPatients; }}
       }
     ],
     Thursday: [
@@ -37,7 +41,8 @@ const DoctorMeetups = new mongoose.Schema({
         date : {type : Date, required : true},
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
-        maxPatients: { type: Number, required: true, min: 1 }
+        maxPatients: { type: Number, required: true, min: 1 },
+        availableSlots : {type : Number, default: function () { return this.maxPatients; }}
       }
     ],
     Friday: [
@@ -46,7 +51,8 @@ const DoctorMeetups = new mongoose.Schema({
          date : {type : Date, required : true},
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
-        maxPatients: { type: Number, required: true, min: 1 }
+        maxPatients: { type: Number, required: true, min: 1 },
+        availableSlots : {type : Number, default: function () { return this.maxPatients; }}
       }
     ],
     Saturday: [
@@ -55,7 +61,8 @@ const DoctorMeetups = new mongoose.Schema({
         date : {type : Date, required : true},
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
-        maxPatients: { type: Number, required: true, min: 1 }
+        maxPatients: { type: Number, required: true, min: 1 },
+        availableSlots : {type : Number, default: function () { return this.maxPatients; }}
       }
     ],
     Sunday: [
@@ -63,7 +70,8 @@ const DoctorMeetups = new mongoose.Schema({
         date : {type : Date, required : true},
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
-        maxPatients: { type: Number, required: true, min: 1 }
+        maxPatients: { type: Number, required: true, min: 1 },
+        availableSlots : {type : Number, default: function () { return this.maxPatients; }}
       }
     ]
   }
