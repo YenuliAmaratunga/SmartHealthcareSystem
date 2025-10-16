@@ -1,4 +1,4 @@
-import { registerPatient, findPatientByQR, registerTemporaryPatient } from "../services/patientService.js";
+import { registerPatient, findPatientByQR, registerTemporaryPatient, getRecentAccessLogs  } from "../services/patientService.js";
 
 export const handleRegisterPatient = async (req, res) => {
   try {
@@ -38,3 +38,14 @@ export const handleScanQRCode = async (req, res) => {
     res.status(500).json({ message: "Error scanning QR code" });
   }
 };
+
+export const handleGetAccessLogs = async (req, res) => {
+  try {
+    const logs = await getRecentAccessLogs();
+    res.status(200).json(logs);
+  } catch (error) {
+    console.error("Error fetching access logs:", error);
+    res.status(500).json({ message: "Error fetching access logs" });
+  }
+};
+
