@@ -1,18 +1,7 @@
-/*import axios from "axios";
-
-const api = axios.create({
-  baseURL: "http://localhost:5001/api/patients",
-});
-
-export const registerPatient = (data) => api.post("/register", data);
-export const registerTempPatient = (data) => api.post("/register/temp", data);
-export const scanQRCode = (qrData) => api.post("/scan", { qrData }); */
-
 import axios from "axios";
 
-// Create a reusable axios instance
 const api = axios.create({
-  baseURL: "http://localhost:5001/api/patients", // your backend URL
+  baseURL: "http://localhost:5001/api/patients", 
   headers: {
     "Content-Type": "application/json",
   },
@@ -51,3 +40,5 @@ export const scanQRCode = async (qrData) => {
   }
 };
 
+// Fetch recent access logs
+export const getAccessLogs = () => api.get("/logs");

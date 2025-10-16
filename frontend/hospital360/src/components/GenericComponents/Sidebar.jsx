@@ -11,7 +11,7 @@ import {
 
 const Sidebar = ({ isCollapsed, toggleCollapse }) => {
   const navItems = [
-    { name: "Dashboard", icon: <MdSpaceDashboard />, path: "/dashboard" },
+    { name: "Dashboard", icon: <MdSpaceDashboard />, path: "/" },
     { name: "Patients", icon: <MdOutlinePeople />, path: "/patients" },
     { name: "Appointments", icon: <MdOutlineCalendarToday />, path: "/appointments" },
     { name: "Staff", icon: <MdOutlineMedicalServices />, path: "/staff" },

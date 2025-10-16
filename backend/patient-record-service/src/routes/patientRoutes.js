@@ -1,10 +1,11 @@
 import express from "express";
-import { handleRegisterPatient, handleScanQRCode, handleRegisterTempPatient } from "../controllers/patientController.js";
+import { handleRegisterPatient, handleScanQRCode, handleRegisterTempPatient, handleGetAccessLogs } from "../controllers/patientController.js";
 
 const router = express.Router();
 
 router.post("/register", handleRegisterPatient);
 router.post("/scan", handleScanQRCode);
-router.post("/register/temp", handleRegisterTempPatient); // A3 flow
+router.post("/register/temp", handleRegisterTempPatient); 
+router.get("/logs", handleGetAccessLogs);
 
 export default router;

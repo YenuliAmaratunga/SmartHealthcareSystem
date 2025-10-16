@@ -62,3 +62,7 @@ export const registerTemporaryPatient = async (data, staffId) => {
 
   return tempPatient;
 };
+
+export const getRecentAccessLogs = async (limit = 10) => {
+  return await AccessLog.find().sort({ timestamp: -1 }).limit(limit);
+};
