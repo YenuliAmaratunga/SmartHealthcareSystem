@@ -34,7 +34,7 @@ function parseHourAny(sessionTime, sessionDate) {
   return null;
 }
 
-export async function getBookingsByDepartment(req, res) {
+export async function getAppointmentsByDepartment(req, res) {
   try {
     const { from, to } = req.query;
     const fromD = from ? new Date(from) : null;
@@ -64,7 +64,7 @@ export async function getBookingsByDepartment(req, res) {
   }
 }
 
-export async function getBookingsByDoctor(req, res) {
+export async function getAppointmentsByDoctor(req, res) {
   try {
     const { from, to, top } = req.query;
     const fromD = from ? new Date(from) : null;
