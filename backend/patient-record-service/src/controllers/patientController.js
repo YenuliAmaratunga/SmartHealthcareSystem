@@ -1,4 +1,4 @@
-import { registerPatient, findPatientByQR } from "../services/patientService.js";
+import { registerPatient, findPatientByQR, registerTemporaryPatient } from "../services/patientService.js";
 
 export const handleRegisterPatient = async (req, res) => {
   try {
