@@ -61,3 +61,20 @@ exports.updateAppointment = async (req, res) => {
   }
 };
 
+
+exports.fetchAllAppointments = async(req,res)=>{
+
+  try{
+
+    const appointments = await BookDoctor.find();
+    if(appointments.length === 0) res.status(404).json('No any available appointments');
+    return res.status(200).json(appointments);
+
+  }catch(err){
+
+    res.status(500).json("Internal Server Error Occured");
+
+  }
+
+
+}
