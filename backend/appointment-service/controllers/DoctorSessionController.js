@@ -1,7 +1,7 @@
 
 const DocorMeetups = require('../models/DoctorMeetups');
 const Doctor = require('../models/Doctor');
-const DoctorMeetups = require('../models/DoctorMeetups');
+const BookDoctor = require('../models/BookDoctor');
 
 
 exports.addDoctorSession = async(req , res)=>{
@@ -34,7 +34,7 @@ exports.readSessionByDoctorName = async(req , res)=>{
         if(!doctor) res.status(404).json({message : `No any doctors found under the name ${doctorName}`});
         const session = await DocorMeetups.find({ doctorId: doctor._id });
         if(session.length === 0) res.status(404).json({message : `No sessions found under ${doctorName}`});
-        res.status(201).json(session);
+        return res.status(201).json(session);
        
 
     }catch(err){
@@ -171,32 +171,31 @@ exports.querySessions = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Server Error" });
   }
+
 };
+
+
+
 
 exports.reserveSlot = async (req, res) => {
   try {
-    const { doctorId, date, time } = req.body;
+    const { doctorId, date, time, patient } = req.body;
 
-  
+    // 1. Find doctor
     const doctor = await Doctor.findById(doctorId);
-    if (!doctor) {
-      return res.status(404).json({ message: "Doctor not found" });
-    }
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-  
+    // 2. Find doctor's sessions
     const doctorMeetup = await DocorMeetups.findOne({ doctorId });
-    if (!doctorMeetup) {
-      return res.status(404).json({ message: "No sessions found for this doctor" });
-    }
+    if (!doctorMeetup) return res.status(404).json({ message: "No sessions found for this doctor" });
 
     const dayOfWeek = new Date(date).toLocaleDateString("en-US", { weekday: "long" });
-
     const sessions = doctorMeetup.sessions[dayOfWeek];
     if (!sessions || sessions.length === 0) {
       return res.status(404).json({ message: `No sessions found for ${dayOfWeek}` });
     }
 
-
+    // 3. Helper to convert session time to minutes
     const toMinutes = (t) => {
       if (!t) return null;
       const [timePart, modifier] = t.split(' ');
@@ -206,41 +205,84 @@ exports.reserveSlot = async (req, res) => {
       return hours * 60 + minutes;
     };
 
-
     const [reqHours, reqMinutes] = time.split(':').map(Number);
     const requestedMinutes = reqHours * 60 + reqMinutes;
 
-
+    // 4. Find matching session
     const session = sessions.find(s => {
       const sessionDate = new Date(s.date).toISOString().slice(0, 10);
       const sessionStart = toMinutes(s.startTime);
       const sessionEnd = toMinutes(s.endTime);
-
       return sessionDate === new Date(date).toISOString().slice(0, 10) &&
              requestedMinutes >= sessionStart &&
              requestedMinutes <= sessionEnd;
     });
 
-    if (!session) {
-      return res.status(404).json({ message: "No matching session found for given date/time" });
-    }
+    if (!session) return res.status(404).json({ message: "No matching session found for given date/time" });
 
- 
+    // 5. Check available slots
     if (!session.availableSlots || session.availableSlots <= 0) {
       return res.status(400).json({ message: "No available slots left" });
     }
 
-
+    // 6. Decrement slots
     session.availableSlots -= 1;
 
-    await doctorMeetup.save();
+    const parseTimeToMinutes = (timeStr) => {
+  // timeStr example: "10:00 AM"
+  const [timePart, modifier] = timeStr.split(' ');
+  let [hours, minutes] = timePart.split(':').map(Number);
+  if (modifier === 'PM' && hours !== 12) hours += 12;
+  if (modifier === 'AM' && hours === 12) hours = 0;
+  return { hours, minutes };
+};
+
+
+    // 7. Calculate session time dynamically
+    const getSessionTime = (session) => {
+  const { hours: startHours, minutes: startMinutes } = parseTimeToMinutes(session.startTime);
+  const slotDuration = session.slotDuration || 15;
+  const patientIndex = session.maxPatients - session.availableSlots - 1; // 0-based
+  const totalMinutes = startHours * 60 + startMinutes + patientIndex * slotDuration;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}`;
+};
+
+
+    const sessionTime = getSessionTime(session);
+    const appointmentNumber = session.maxPatients - session.availableSlots;
+
+    // 8. Calculate fees
+    const hospitalFee = doctor.hospitalFee || 1500;
+    const onlineBookingFee = doctor.onlineBookingFee || 200;
+    const totalAmount = Number(doctor.doctorFee) + hospitalFee + onlineBookingFee;
+
+    // 9. Create appointment
+    const appointment = new BookDoctor({
+      patient,
+      doctor: doctorId,
+      speacialization: doctor.specialization,
+      doctorFee: doctor.doctorFee,
+      sessionDate: new Date(session.date),
+      sessionTime,
+      hospitalFee,
+      onlineBookingFee,
+      totalAmount,
+      apointmentNumber: appointmentNumber
+    });
+
+    await appointment.save();
+    await doctorMeetup.save(); // Save updated slots
 
     return res.status(200).json({
       message: "Slot reserved successfully",
       doctor: doctor.doctorName,
       date,
       time,
-      remainingSlots: session.availableSlots
+      remainingSlots: session.availableSlots,
+      appointmentNumber,
+      totalAmount
     });
 
   } catch (err) {

@@ -9,9 +9,11 @@ app.use(express.json());
 
 const sessions = require('./routes/SessionRoutes')
 const doctors = require('./routes/DoctorRoutes');
+const appointment = require('./routes/AppointmentRoutes');
 
 app.use('/api/Doctors',doctors);
 app.use('/api/Sessions',sessions);
+app.use('/api/Appointments',appointment);
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
