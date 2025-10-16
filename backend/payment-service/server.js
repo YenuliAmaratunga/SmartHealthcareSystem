@@ -1,35 +1,30 @@
-// Import dependencies
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const paymentRoutes = require('./src/routes/paymentRoutes');
 
-// Load environment variables from .env file
 dotenv.config();
 
-// Initialize app
 const app = express();
-
-// Middlewares
 app.use(cors());
-app.use(express.json()); // parse JSON request bodies
+app.use(express.json());
 
-// MongoDB Connection
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log("✅ Connected to MongoDB"))
-.catch((err) => {
-  console.error("❌ Failed to connect to MongoDB:", err.message);
-  process.exit(1); // Stop the app if DB connection fails
-});
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ Failed to connect to MongoDB:", err));
 
-// Test route
+// Use payment routes
+app.use('/api/payments', paymentRoutes); // 👈 mount route here
+
+// Health check route
 app.get('/', (req, res) => {
-  res.send('Payment API is running ✅');
+  res.send('✅ Payment API is running');
 });
 
-// Server listening
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-
