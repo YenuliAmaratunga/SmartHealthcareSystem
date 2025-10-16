@@ -293,6 +293,8 @@ exports.reserveSlot = async (req, res) => {
   }
 };
 
+
+
 exports.fetchByNameAndSpecialization = async (req, res) => {
   try {
  
