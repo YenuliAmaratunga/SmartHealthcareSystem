@@ -293,3 +293,75 @@ exports.reserveSlot = async (req, res) => {
     });
   }
 };
+
+
+
+exports.fetchByNameAndSpecialization = async (req, res) => {
+  try {
+ 
+    const { doctorName, specialization } = req.query;
+
+    if (!doctorName && !specialization) {
+      return res
+        .status(400)
+        .json({ message: "Please provide doctor name or specialization." });
+    }
+
+    // Build filter for Doctor model
+    const doctorFilter = {};
+    if (doctorName) doctorFilter.doctorName = { $regex: doctorName, $options: "i" };
+    if (specialization)
+      doctorFilter.specialization = { $regex: specialization, $options: "i" };
+
+    // Find doctors
+    const doctors = await Doctor.find(
+      doctorFilter,
+      "_id doctorName specialization"
+    );
+
+    if (!doctors.length) {
+      return res.status(404).json({ message: "No matching doctors found." });
+    }
+
+    const doctorIds = doctors.map((doc) => doc._id);
+
+    // Find all sessions for those doctors
+    const meetups = await DocorMeetups.find({
+      doctorId: { $in: doctorIds },
+    }).populate("doctorId", "_id doctorName specialization");
+
+
+    if (!meetups.length) {
+      return res
+        .status(404)
+        .json({ message: "No sessions found for selected doctors." });
+    }
+
+    // Collect sessions in consistent structure
+    const allSessions = [];
+
+    meetups.forEach((meetup) => {
+      const sessionsByDay = meetup.sessions || {};
+      Object.keys(sessionsByDay).forEach((day) => {
+        sessionsByDay[day].forEach((session) => {
+          allSessions.push({
+            doctorName: meetup.doctorId.doctorName,
+            specialization: meetup.doctorId.specialization,
+            doctorId: meetup.doctorId?._id || meetup.doctorId,
+            day,
+            date: session.date,
+            startTime: session.startTime,
+            endTime: session.endTime,
+            maxPatients: session.maxPatients,
+            availableSlots: session.availableSlots || 0, // optional safety
+          });
+        });
+      });
+    });
+
+    res.status(200).json(allSessions);
+  } catch (err) {
+    console.error("Error fetching sessions:", err);
+    res.status(500).json({ error: "Server error while fetching sessions." });
+  }
+};
