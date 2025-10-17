@@ -30,15 +30,17 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
 
+      <Route path="/patients" element={<CheckInDashboard />} />
+      <Route path="/patients/:id" element={<PatientDetailsPage />} />
+      <Route path="/patients/register-patient" element={<RegisterPatientFormPage />} />
+      <Route path="/patients/register-temp-patient" element={<TemporaryPatientFormPage />} />
+
+
       <Route path="/analytics" element={<AnalyticsDashboard />} />
       <Route path="/reports" element={<AnalyticsOverview/>} />
       <Route path="/allreports" element={<ReportsList/>} />
       
-      {/* Patient Check-In Routes */}
-      <Route path="/check-in" element={<CheckInDashboard />} />
-      <Route path="/patient-details/:id" element={<PatientDetailsPage />} />
-      <Route path="/patients/register-patient" element={<RegisterPatientFormPage />} />
-      <Route path="/patients/register-temp-patient" element={<TemporaryPatientFormPage />} />
+     
 
       {/* Appointment Routes */}
       <Route path="/scheduleAppointments" element={<SchAppointments />} />
@@ -53,6 +55,7 @@ export default function App() {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/payment-success" element={<PaymentSuccessPage />} />
       <Route path="/payment-failure" element={<PaymentFailurePage />} />
+
     </Routes>
   );
 }
