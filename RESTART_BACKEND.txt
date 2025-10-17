@@ -1,0 +1,18 @@
+🔧 RESTART BACKEND SERVER NOW!
+
+In your backend terminal:
+
+1. Press Ctrl+C to stop the server
+
+2. Run:
+   npm run dev
+
+3. You should see:
+   ✅ Stripe initialized with key: sk_test_51SIu5uAtvo9...
+   ✅ Connected to MongoDB
+   🚀 Server running at http://localhost:5003
+
+If you see the Stripe initialization message, it means the fix worked!
+
+Then try the payment again in your browser.
+

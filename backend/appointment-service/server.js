@@ -2,9 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
-const PORT = 8080
+const PORT = 8081
 const app = express();
 app.use(cors());
+app.use(express.json());
+
+const sessions = require('./routes/SessionRoutes')
+const doctors = require('./routes/DoctorRoutes');
+const appointment = require('./routes/AppointmentRoutes');
+
+app.use('/api/Doctors',doctors);
+app.use('/api/Sessions',sessions);
+app.use('/api/Appointments',appointment);
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
