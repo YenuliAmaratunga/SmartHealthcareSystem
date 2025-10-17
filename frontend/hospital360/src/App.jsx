@@ -6,6 +6,11 @@ import PatientDetailsPage from "./pages/PatientDetailsPage";
 import RegisterPatientFormPage from "./pages/RegisterPatientFormPage";
 import TemporaryPatientFormPage from "./pages/TemporaryPatientFormPage";
 
+import AnalyticsDashboard from "./pages/analyticsDashboard"
+import AnalyticsOverview from "./pages/AnalyticsOverview";     
+import ReportsList from "./pages/ReportsList"; 
+
+import Home from "./pages/Home";
 // Appointment Routes
 import SchAppointments from "./pages/SchAppointments";
 import AvailabilityResults from "./pages/AvailabilityResults";
@@ -23,6 +28,11 @@ import PaymentFailurePage from "./pages/PaymentFailurePage";
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
+
+      <Route path="/analytics" element={<AnalyticsDashboard />} />
+      <Route path="/reports" element={<AnalyticsOverview/>} />
+      <Route path="/allreports" element={<ReportsList/>} />
       {/* Patient Check-In Routes */}
       <Route path="/check-in" element={<CheckInDashboard />} />
       <Route path="/patient-details/:id" element={<PatientDetailsPage />} />
