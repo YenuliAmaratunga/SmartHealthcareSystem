@@ -10,12 +10,15 @@ import TemporaryPatientFormPage from "./pages/TemporaryPatientFormPage";
 import SchAppointments from "./pages/SchAppointments";
 import AvailabilityResults from "./pages/AvailabilityResults";
 import BookAppointment from "./pages/BookAppointment";
+import AppointmentsList from "./pages/AppointmentsList";
+
 
 // Payment Module Routes
 import BillsAndPaymentsPage from "./pages/BillsAndPaymentsPage";
 import PaymentPage from "./pages/PaymentPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import PaymentFailurePage from "./pages/PaymentFailurePage";
+
 
 export default function App() {
   return (
@@ -30,6 +33,9 @@ export default function App() {
       <Route path="/scheduleAppointments" element={<SchAppointments />} />
       <Route path="/availability" element={<AvailabilityResults />} />
       <Route path="/book-appointment" element={<BookAppointment />} />
+      <Route path="/appointments" element = {<AppointmentsList/>}/>
+    
+     
 
       {/* Payment Routes */}
       <Route path="/bills-and-payments" element={<BillsAndPaymentsPage />} />

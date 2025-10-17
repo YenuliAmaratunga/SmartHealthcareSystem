@@ -57,7 +57,7 @@ export default function BookAppointment() {
         \nAppointment No: #${appointmentNumber} 
         \nTime: ${slotTime}`);
 
-    //   setTimeout(() => navigate("/"), 3000); // go home after success
+     setTimeout(() => navigate("/appointments"), 3000); // go home after success
     } catch (err) {
       console.error("❌ Booking error:", err);
       setStatus(err.response?.data?.message || "Failed to confirm booking.");
