@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import {
   FaUserPlus,
@@ -104,39 +105,44 @@ export default function CheckInDashboard() {
           </div>
         </div>
 
-        {/* --- Manual Entry Modal --- */}
-        {manualEntry && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative animate-fadeIn">
-              <button
-                onClick={() => setManualEntry(false)}
-                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-              >
-                <FaTimes />
-              </button>
-
-              <h2 className="text-lg font-semibold text-center text-gray-800 mb-4">
-                🔍 Enter Patient ID
-              </h2>
-
-              <form onSubmit={handleManualSubmit} className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="e.g. P9663"
-                  value={patientIdInput}
-                  onChange={(e) => setPatientIdInput(e.target.value)}
-                  className="w-full border border-gray-300 rounded-xl px-3 py-2 text-gray-700 focus:ring-2 focus:ring-green-400 outline-none"
-                />
+        {/* --- Manual Entry Modal (Portal) --- */}
+        {manualEntry &&
+          createPortal(
+            <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative animate-fadeIn">
                 <button
-                  type="submit"
-                  className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-xl flex justify-center items-center gap-2 transition"
+                  onClick={() => setManualEntry(false)}
+                  className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
                 >
-                  <FaSearch /> Find Patient
+                  <FaTimes />
                 </button>
-              </form>
-            </div>
-          </div>
-        )}
+
+                <h2 className="text-lg font-semibold text-center text-gray-800 mb-4">
+                  🔍 Enter Patient ID
+                </h2>
+
+                <form
+                  onSubmit={handleManualSubmit}
+                  className="space-y-4"
+                >
+                  <input
+                    type="text"
+                    placeholder="e.g. P9663"
+                    value={patientIdInput}
+                    onChange={(e) => setPatientIdInput(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2 text-gray-700 focus:ring-2 focus:ring-green-400 outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-xl flex justify-center items-center gap-2 transition"
+                  >
+                    <FaSearch /> Find Patient
+                  </button>
+                </form>
+              </div>
+            </div>,
+            document.body
+          )}
 
         {/* --- Scanned Patient Info --- */}
         {patient && (
