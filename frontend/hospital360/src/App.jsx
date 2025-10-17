@@ -37,8 +37,8 @@ export default function App() {
       {/* Patient Check-In Routes */}
       <Route path="/check-in" element={<CheckInDashboard />} />
       <Route path="/patient-details/:id" element={<PatientDetailsPage />} />
-      <Route path="/register-patient" element={<RegisterPatientFormPage />} />
-      <Route path="/temporary-patient" element={<TemporaryPatientFormPage />} />
+      <Route path="/patients/register-patient" element={<RegisterPatientFormPage />} />
+      <Route path="/patients/register-temp-patient" element={<TemporaryPatientFormPage />} />
 
       {/* Appointment Routes */}
       <Route path="/scheduleAppointments" element={<SchAppointments />} />
