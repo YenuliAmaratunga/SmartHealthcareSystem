@@ -22,10 +22,7 @@ export const registerPatient = async (data, staffId) => {
 
 export const findPatientByQR = async (qrData, staffId) => {
   const decoded = JSON.parse(qrData);
-  const patient = await Patient.findOne(
-    { patientId: decoded.patientId },
-    "patientId name dob gender contact allergies medications appointments type"
-  );
+  const patient = await Patient.findOne({ patientId: decoded.patientId });
 
   await AccessLog.create({
     staffId,
