@@ -19,10 +19,11 @@ function computeRevenue(appt) {
 
 export async function getTotals(req, res) {
   try {
-    // NEW: optional range
+    // optional range
     const { from, to } = req.query;
     const fromD = from ? new Date(from) : null;
     const toD   = to   ? new Date(to)   : null;
+    if (toD) toD.setHours(23, 59, 59, 999); // <— make "to" inclusive
 
     const [patients, doctors, appts] = await Promise.all([
       getAllPatients(),
@@ -32,7 +33,7 @@ export async function getTotals(req, res) {
 
     const inRange = (a) => {
       const d = a?.sessionDate ? new Date(a.sessionDate) : null;
-      if (!d || Number.isNaN(d)) return false;
+      if (!d || Number.isNaN(d.getTime())) return false; // <— correct Date validity check
       if (fromD && d < fromD) return false;
       if (toD   && d > toD)   return false;
       return true;
@@ -50,10 +51,10 @@ export async function getTotals(req, res) {
     const scheduledRevenue = sourceAppts.reduce((sum, a) => sum + computeRevenue(a), 0);
 
     return res.status(200).json({
-      totalPatients: patients.length,        
-      totalPractitioners: doctors.length,    
-      upcomingAppointments,                  
-      scheduledRevenue                      
+      totalPatients: patients.length,
+      totalPractitioners: doctors.length,
+      upcomingAppointments,
+      scheduledRevenue
     });
   } catch (err) {
     console.error("getTotals error:", err?.message || err);
