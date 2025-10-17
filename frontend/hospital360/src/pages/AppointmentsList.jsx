@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 dayjs.extend(isSameOrAfter);
+import AppLayout from "../components/GenericComponents/AppLayout";
 
 export default function AppointmentsList() {
   const [appointments, setAppointments] = useState([]);
@@ -218,6 +219,7 @@ export default function AppointmentsList() {
 
   // ✅ Main Render
   return (
+     <AppLayout>
     <div className="min-h-screen bg-gray-50 relative">
       <div className="max-w-6xl mx-auto p-8 space-y-8">
         <header className="text-center">
@@ -303,5 +305,6 @@ export default function AppointmentsList() {
         </div>
       )}
     </div>
+    </AppLayout>
   );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import doctorImage from "../assets/doctor.png"; // replace with your doctor image
+import AppLayout from "../components/GenericComponents/AppLayout";
 
 export default function AvailabilityResults() {
 const location = useLocation();
@@ -85,6 +86,7 @@ if (!firstSession?.doctorId && otherSessions.length > 0) {
   }, [firstSession]);
 
   return (
+    <AppLayout>
     <div className="min-h-screen bg-gray-50 text-gray-800 py-10 px-6">
       <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg border border-gray-200">
         {/* Doctor Header */}
@@ -267,5 +269,6 @@ if (!firstSession?.doctorId && otherSessions.length > 0) {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

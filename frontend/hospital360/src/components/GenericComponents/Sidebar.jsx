@@ -7,17 +7,19 @@ import {
   MdOutlineMedicalServices,
   MdAssessment,
   MdMenu,
-  MdPayment
+  MdPayment,
+  MdMedicalServices
 } from "react-icons/md";
 
 const Sidebar = ({ isCollapsed, toggleCollapse }) => {
   const navItems = [
     { name: "Dashboard", icon: <MdSpaceDashboard />, path: "/" },
     { name: "Patients", icon: <MdOutlinePeople />, path: "/check-in" },
-    { name: "Appointments", icon: <MdOutlineCalendarToday />, path: "/scheduleAppointments" },
+    { name: "Scedule Appointments", icon: <MdOutlineCalendarToday />, path: "/scheduleAppointments" },
     { name: "Staff", icon: <MdOutlineMedicalServices />, path: "/staff" },
     { name: "Reports", icon: <MdAssessment />, path: "/reports" },
-    { name: "Payment", icon: <MdPayment />, path: "/payment" }
+    { name: "Payment", icon: <MdPayment />, path: "/payment" },
+    { name: "My Appointments", icon: <MdMedicalServices />, path: "/appointments" },
   ];
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import AppLayout from "../components/GenericComponents/AppLayout";
 
 export default function BookAppointment() {
   const location = useLocation();
@@ -85,6 +86,8 @@ export default function BookAppointment() {
   };
 
   return (
+
+    <AppLayout>
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-indigo-50 to-blue-100 p-6">
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg border border-gray-100">
         <h1 className="text-3xl font-bold text-center text-indigo-700 mb-4">
@@ -139,5 +142,6 @@ export default function BookAppointment() {
         )}
       </div>
     </div>
+    </AppLayout>
   );
 }
