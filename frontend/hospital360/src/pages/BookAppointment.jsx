@@ -51,7 +51,7 @@ export default function BookAppointment() {
       };
       console.log(payload);
 
-      await axios.put("http://localhost:8080/api/Sessions/reserveSlot", payload);
+      await axios.put("http://localhost:8081/api/Sessions/reserveSlot", payload);
 
       setStatus(`✅ Appointment confirmed! 
         \nAppointment No: #${appointmentNumber} 

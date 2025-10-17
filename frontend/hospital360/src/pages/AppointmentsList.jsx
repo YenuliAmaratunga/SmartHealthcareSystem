@@ -32,7 +32,7 @@ export default function AppointmentsList() {
     const fetchAppointments = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/Appointments/viewAppointments/${patientId}`
+          `http://localhost:8081/api/Appointments/viewAppointments/${patientId}`
         );
         setAppointments(res.data);
       } catch (err) {
@@ -55,7 +55,7 @@ export default function AppointmentsList() {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `http://localhost:8080/api/Appointments/deleteAppointments/${deleteId}`
+        `http://localhost:8081/api/Appointments/deleteAppointments/${deleteId}`
       );
       setAppointments((prev) => prev.filter((a) => a._id !== deleteId));
       setShowDeleteModal(false);
@@ -64,11 +64,6 @@ export default function AppointmentsList() {
       console.error(err);
       alert("Failed to delete appointment!");
     }
-  };
-
-  // ✅ Handle Edit
-  const handleEdit = (id) => {
-    alert(`Edit form coming soon for appointment ${id}`);
   };
 
   // ✅ Tab logic

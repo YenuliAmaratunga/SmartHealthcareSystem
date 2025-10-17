@@ -17,7 +17,7 @@ export default function SchAppointments() {
       if (doctorName.trim().length > 1) {
         try {
           const res = await axios.get(
-            `http://localhost:8080/api/Doctors/getDoctorByName/${doctorName}`
+            `http://localhost:8081/api/Doctors/getDoctorByName/${doctorName}`
           );
           setSuggestions(res.data || []);
         } catch {
@@ -34,7 +34,7 @@ export default function SchAppointments() {
   e.preventDefault();
   setLoading(true);
   try {
-    const res = await axios.get("http://localhost:8080/api/Sessions/filterSession", {
+    const res = await axios.get("http://localhost:8081/api/Sessions/filterSession", {
       params: { name: doctorName, specialization, date },
     });
 

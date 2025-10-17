@@ -46,7 +46,7 @@ if (!firstSession?.doctorId && otherSessions.length > 0) {
         });
 
         const response = await axios.get(
-          "http://localhost:8080/api/Sessions/fetchByNameAndSpecialization",
+          "http://localhost:8081/api/Sessions/fetchByNameAndSpecialization",
           {
             params: {
               doctorName: firstSession.doctorName,

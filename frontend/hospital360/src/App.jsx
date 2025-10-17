@@ -33,6 +33,7 @@ export default function App() {
       <Route path="/analytics" element={<AnalyticsDashboard />} />
       <Route path="/reports" element={<AnalyticsOverview/>} />
       <Route path="/allreports" element={<ReportsList/>} />
+      
       {/* Patient Check-In Routes */}
       <Route path="/check-in" element={<CheckInDashboard />} />
       <Route path="/patient-details/:id" element={<PatientDetailsPage />} />
