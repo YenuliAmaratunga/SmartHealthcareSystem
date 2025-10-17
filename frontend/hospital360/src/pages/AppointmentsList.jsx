@@ -168,6 +168,11 @@ export default function AppointmentsList() {
             <span className="text-gray-800">Rs. {a.hospitalFee}</span>
           </div>
 
+           <div className="flex items-center justify-between">
+            <span className="font-medium text-gray-600">Online Booking Fee:</span>
+            <span className="text-gray-800">Rs. 200</span>
+          </div>
+
           <div className="flex items-center justify-between border-t pt-2">
             <span className="font-semibold text-gray-800">Total:</span>
             <span className="font-bold text-blue-600">
