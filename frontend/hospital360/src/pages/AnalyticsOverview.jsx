@@ -103,7 +103,6 @@ export default function AnalyticsOverview() {
 
       setExtraCards({ checkins7d, failures7d, topDepartment, peakHour });
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error("[Overview] generate error", e);
       alert("Unable to load analytics. Please try again.");
     } finally {
@@ -135,8 +134,7 @@ export default function AnalyticsOverview() {
       a.href = dataUrl;
       a.download = `analytics_${new Date().toISOString().slice(0,10)}.pdf`;
       a.click();
-    } catch (e) {
-      // eslint-disable-next-line no-console
+    } catch (e) {      
       console.error("[Overview] pdf error", e);
       alert("Download failed. Please try again.");
     }
