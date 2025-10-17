@@ -8,10 +8,14 @@ const location = useLocation();
 const navigate = useNavigate();
 
 const results = location.state?.results || [];
-const otherSessions = location.state?.otherSessions || [];
+const [otherSessions, setOtherSessions] = useState(location.state?.otherSessions || []);
 const message = location.state?.message || "No sessions found.";
 
-const firstSession = results[0] || otherSessions[0]; // fallback to show doctor info
+const firstSession = results[0] || otherSessions[0]; 
+if (!firstSession?.doctorId && otherSessions.length > 0) {
+  firstSession.doctorId = otherSessions[0].doctorId;
+}
+
 
 
   // Helper: format date cleanly
@@ -38,6 +42,7 @@ const firstSession = results[0] || otherSessions[0]; // fallback to show doctor 
         console.log("📡 Fetching other sessions:", {
           doctorName: firstSession.doctorName,
           specialization: firstSession.specialization,
+          doctorId : firstSession.doctorId
         });
 
         const response = await axios.get(
@@ -51,6 +56,7 @@ const firstSession = results[0] || otherSessions[0]; // fallback to show doctor 
         );
 
         console.log("✅ Backend responded:", response.data);
+       
 
         // Handle both array and {results: [...]}
         const dataArray = Array.isArray(response.data)
@@ -96,7 +102,7 @@ const firstSession = results[0] || otherSessions[0]; // fallback to show doctor 
               <p className="text-gray-700 text-sm mt-1">
                 {firstSession.specialization}
               </p>
-              <p className="text-gray-500 text-sm">Special Notes: —</p>
+              <p className="text-gray-500 text-sm">Special Notes: — </p>
             </div>
           </div>
         )}
@@ -155,7 +161,14 @@ const firstSession = results[0] || otherSessions[0]; // fallback to show doctor 
                               Contact Hospital
                             </button>
                           ) : (
-                            <button className="px-4 py-2 text-sm font-semibold rounded bg-red-600 text-white hover:bg-red-700 transition">
+                            <button 
+                            onClick={() =>
+                                navigate("/book-appointment", {
+                                  state: { session },
+                                })
+                              }
+                            
+                            className="px-4 py-2 text-sm font-semibold rounded bg-red-600 text-white hover:bg-red-700 transition">
                               Book Appointment
                             </button>
                           )}
@@ -222,7 +235,14 @@ const firstSession = results[0] || otherSessions[0]; // fallback to show doctor 
                               Contact Hospital
                             </button>
                           ) : (
-                            <button className="px-4 py-2 text-sm font-semibold rounded bg-red-600 text-white hover:bg-red-700 transition">
+                            <button
+                            onClick={() =>
+             navigate("/book-appointment", {
+            state: { session },
+            })
+  }
+                            
+                            className="px-4 py-2 text-sm font-semibold rounded bg-red-600 text-white hover:bg-red-700 transition">
                               Book Appointment
                             </button>
                           )}

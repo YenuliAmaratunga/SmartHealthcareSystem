@@ -1,11 +1,17 @@
 import { Routes, Route } from "react-router-dom";
+<<<<<<< HEAD
 import SchAppointments from "./pages/SchAppointments";
 import AvailabilityResults from "./pages/AvailabilityResults";
 
+=======
+>>>>>>> origin/develop
 import CheckInDashboard from "./pages/PatientCheckInDashboard";
 import PatientDetailsPage from "./pages/PatientDetailsPage";
 import RegisterPatientFormPage from "./pages/RegisterPatientFormPage";
 import TemporaryPatientFormPage from "./pages/TemporaryPatientFormPage";
+import SchAppointments from "./pages/SchAppointments";
+import AvailabilityResults from "./pages/AvailabilityResults";
+import BookAppointment from "./pages/BookAppointment";
 
 // Payment Module Routes
 import BillsAndPaymentsPage from "./pages/BillsAndPaymentsPage";
@@ -16,6 +22,7 @@ import PaymentFailurePage from "./pages/PaymentFailurePage";
 export default function App() {
   return (
     <Routes>
+<<<<<<< HEAD
       {/* Appointment Routes */}
       <Route path="/scheduleAppointments" element={<SchAppointments />} />
       <Route path="/availability" element={<AvailabilityResults />} />
@@ -31,6 +38,13 @@ export default function App() {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/payment-success" element={<PaymentSuccessPage />} />
       <Route path="/payment-failure" element={<PaymentFailurePage />} />
+=======
+   
+      <Route path = "/scheduleAppointments" element = {<SchAppointments/>}/>
+      <Route path="/availability" element = {<AvailabilityResults/>}/>
+      <Route path = "/book-appointment" element = {<BookAppointment/>}/>
+   
+>>>>>>> origin/develop
     </Routes>
   );
 }
