@@ -30,10 +30,26 @@ const handleValidationErrors = (req, res) => {
  */
 exports.initiateCardPayment = async (req, res) => {
   try {
+    // Debug logging
+    console.log('📥 Received payment initiation request');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    
     const validationError = handleValidationErrors(req, res);
     if (validationError) return validationError;
 
     const { patientId, invoiceId, amount, paymentType, patientInfo } = req.body;
+
+    // Validate required fields
+    if (!patientId || !invoiceId || !amount || !paymentType || !patientInfo) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields',
+        received: { patientId, invoiceId, amount, paymentType, hasPatientInfo: !!patientInfo }
+      });
+    }
+
+    console.log('✅ All required fields present');
+    console.log(`Processing payment: $${amount} for invoice ${invoiceId}`);
 
     const result = await paymentService.initiateCardPayment({
       patientId,
@@ -49,7 +65,11 @@ exports.initiateCardPayment = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error('Error initiating card payment:', error);
+    console.error('❌ Error initiating card payment:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack
+    });
     res.status(400).json({
       success: false,
       message: error.message,

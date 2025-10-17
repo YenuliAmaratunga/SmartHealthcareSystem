@@ -96,6 +96,7 @@ const paymentSchema = new mongoose.Schema({
 paymentSchema.pre('save', function(next) {
   if (!this.transactionId) {
     this.transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    console.log('Generated transactionId:', this.transactionId);
   }
   next();
 });

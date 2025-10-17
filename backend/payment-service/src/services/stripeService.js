@@ -1,5 +1,14 @@
 const Stripe = require('stripe');
+
+// Validate that Stripe key is present
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error('❌ ERROR: STRIPE_SECRET_KEY is not set in environment variables!');
+  console.error('Please check your .env file');
+  throw new Error('Missing STRIPE_SECRET_KEY environment variable');
+}
+
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+console.log('✅ Stripe initialized with key:', process.env.STRIPE_SECRET_KEY.substring(0, 20) + '...');
 
 /**
  * Stripe Service

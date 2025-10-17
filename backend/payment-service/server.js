@@ -1,10 +1,10 @@
+// Load environment variables FIRST before anything else
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const paymentRoutes = require('./src/routes/paymentRoutes');
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
