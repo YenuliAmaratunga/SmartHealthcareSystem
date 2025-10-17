@@ -304,7 +304,17 @@ const PaymentPage = () => {
               
               {/* Payment Form */}
               {paymentMethod === 'new-card' ? (
-                <Elements stripe={stripePromise}>
+                clientSecret ? (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <CardPaymentForm
+                      invoice={invoice}
+                      amount={getPaymentAmountValue()}
+                      onInitiatePayment={handleInitiateNewCardPayment}
+                      clientSecret={clientSecret}
+                      loading={loading}
+                    />
+                  </Elements>
+                ) : (
                   <CardPaymentForm
                     invoice={invoice}
                     amount={getPaymentAmountValue()}
@@ -312,7 +322,7 @@ const PaymentPage = () => {
                     clientSecret={clientSecret}
                     loading={loading}
                   />
-                </Elements>
+                )
               ) : (
                 <SavedCardsList
                   cards={savedCards}

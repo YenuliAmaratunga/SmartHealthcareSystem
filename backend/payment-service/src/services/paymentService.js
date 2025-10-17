@@ -59,7 +59,7 @@ class PaymentService {
       
       return {
         paymentId: payment._id,
-        transactionId: payment.transactionId,
+        //transactionId: payment.transactionId,
         clientSecret,
         amount,
         invoiceNumber: invoice.invoiceNumber,
@@ -139,7 +139,7 @@ class PaymentService {
           patientId,
           invoiceNumber: invoice.invoiceNumber,
           amount,
-          transactionId: payment.transactionId,
+          //transactionId: payment.transactionId,
         });
       }
       
@@ -147,7 +147,7 @@ class PaymentService {
       
       return {
         paymentId: payment._id,
-        transactionId: payment.transactionId,
+        //transactionId: payment.transactionId,
         status: payment.status,
         amount,
         invoiceNumber: invoice.invoiceNumber,
@@ -187,12 +187,12 @@ class PaymentService {
           patientId: payment.patientId,
           invoiceNumber: invoice.invoiceNumber,
           amount: payment.amount,
-          transactionId: payment.transactionId,
+          //transactionId: payment.transactionId,
         });
         
         return {
           success: true,
-          transactionId: payment.transactionId,
+          //transactionId: payment.transactionId,
           status: 'Completed',
           message: 'Payment completed successfully',
         };
@@ -222,7 +222,7 @@ class PaymentService {
       
       return {
         success: false,
-        transactionId: payment.transactionId,
+        //transactionId: payment.transactionId,
         canRetry: payment.canRetry(),
         message: errorInfo.message,
       };
@@ -367,7 +367,7 @@ class PaymentService {
         .limit(filters.limit || 50);
       
       return payments.map(payment => ({
-        transactionId: payment.transactionId,
+        //transactionId: payment.transactionId,
         amount: payment.amount,
         paymentType: payment.paymentType,
         paymentMethod: payment.paymentMethod,

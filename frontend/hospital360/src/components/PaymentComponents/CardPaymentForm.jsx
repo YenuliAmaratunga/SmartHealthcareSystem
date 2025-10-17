@@ -9,11 +9,11 @@ import { confirmPayment, savePaymentMethod } from '../../api/paymentapi';
 import { FaSave } from 'react-icons/fa';
 
 /**
- * Card Payment Form
+ * Card Payment Form (with Stripe Elements)
  * Integrates with Stripe Elements for secure card input
  * Implements UC-003 Steps 8-10 (Card Payment)
  */
-const CardPaymentForm = ({ invoice, amount, onInitiatePayment, clientSecret, loading: parentLoading }) => {
+const CardPaymentFormWithStripe = ({ invoice, amount, clientSecret }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -21,16 +21,6 @@ const CardPaymentForm = ({ invoice, amount, onInitiatePayment, clientSecret, loa
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [saveCard, setSaveCard] = useState(false);
-  const [paymentInitiated, setPaymentInitiated] = useState(!!clientSecret);
-  
-  const handleInitiate = async (e) => {
-    e.preventDefault();
-    
-    const result = await onInitiatePayment();
-    if (result) {
-      setPaymentInitiated(true);
-    }
-  };
   
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -111,33 +101,18 @@ const CardPaymentForm = ({ invoice, amount, onInitiatePayment, clientSecret, loa
     }).format(amt);
   };
   
-  if (!clientSecret) {
-    return (
-      <div className="space-y-4">
-        <p className="text-sm text-gray-600">
-          Click the button below to securely enter your card details
-        </p>
-        <button
-          onClick={handleInitiate}
-          disabled={parentLoading || !amount}
-          className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          {parentLoading ? 'Initializing...' : `Pay ${formatCurrency(amount)}`}
-        </button>
-      </div>
-    );
-  }
-  
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Stripe Payment Element */}
-      <div className="p-4 border border-gray-300 rounded-lg">
-        <PaymentElement
-          options={{
-            layout: 'tabs',
-          }}
-        />
-      </div>
+      {/* Stripe Payment Element - Only render when we have elements */}
+      {stripe && elements && (
+        <div className="p-4 border border-gray-300 rounded-lg">
+          <PaymentElement
+            options={{
+              layout: 'tabs',
+            }}
+          />
+        </div>
+      )}
       
       {/* Save Card Option */}
       <label className="flex items-center gap-2 cursor-pointer">
@@ -182,6 +157,60 @@ const CardPaymentForm = ({ invoice, amount, onInitiatePayment, clientSecret, loa
       </p>
     </form>
   );
+};
+
+/**
+ * Card Payment Form Wrapper
+ * Handles initiation and Stripe Elements rendering
+ */
+const CardPaymentForm = ({ invoice, amount, onInitiatePayment, clientSecret, loading: parentLoading }) => {
+  const [error, setError] = useState(null);
+  
+  const handleInitiate = async (e) => {
+    e.preventDefault();
+    setError(null);
+    await onInitiatePayment();
+  };
+  
+  const formatCurrency = (amt) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amt);
+  };
+  
+  // Show button to initiate payment if no clientSecret yet
+  if (!clientSecret) {
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          Click the button below to securely enter your card details
+        </p>
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
+        <button
+          onClick={handleInitiate}
+          disabled={parentLoading || !amount}
+          className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          {parentLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              Initializing...
+            </span>
+          ) : (
+            `Pay ${formatCurrency(amount)}`
+          )}
+        </button>
+      </div>
+    );
+  }
+  
+  // Render Stripe payment form when we have clientSecret
+  return <CardPaymentFormWithStripe invoice={invoice} amount={amount} clientSecret={clientSecret} />;
 };
 
 export default CardPaymentForm;

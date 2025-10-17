@@ -93,13 +93,14 @@ const paymentSchema = new mongoose.Schema({
 /**
  * Generate unique transaction ID
  */
-paymentSchema.pre('save', function(next) {
+paymentSchema.pre('validate', function (next) {
   if (!this.transactionId) {
     this.transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    console.log('Generated transactionId:', this.transactionId);
+    console.log('✅ Generated transactionId:', this.transactionId);
   }
   next();
 });
+
 
 /**
  * Mark payment as completed
