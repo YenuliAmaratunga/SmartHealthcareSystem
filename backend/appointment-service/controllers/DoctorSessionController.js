@@ -97,40 +97,49 @@ exports.querySessions = async (req, res) => {
   try {
     const { name, specialization, time, date } = req.query;
 
-    
+    if (!name && !specialization && !time && !date) {
+      return res.status(400).json({ message: "Please enter at least one filter to search." });
+    }
+
     const doctorFilter = {};
     if (name) doctorFilter.doctorName = { $regex: name, $options: "i" };
-    if (specialization)
-      doctorFilter.specialization = { $regex: specialization, $options: "i" };
+    if (specialization) doctorFilter.specialization = { $regex: specialization, $options: "i" };
 
-   
     const doctors = await Doctor.find(doctorFilter, "_id doctorName specialization");
     if (doctors.length === 0) {
       return res.status(404).json({ message: "No matching doctors found" });
     }
 
     const doctorIds = doctors.map((doc) => doc._id);
-
-
-    const sessionQuery = { doctorId: { $in: doctorIds } };
-
-    
-    const meetups = await DocorMeetups.find(sessionQuery).populate("doctorId", "doctorName specialization");
+    const meetups = await DocorMeetups.find({ doctorId: { $in: doctorIds } })
+      .populate("doctorId", "doctorName specialization");
 
     if (!meetups.length) {
-      return res.status(404).json({ message: "No sessions found for the selected doctors" });
+      return res.status(404).json({ message: "No sessions found for selected doctors" });
     }
 
-    
     const filteredResults = [];
+    const allSessions = [];
 
     meetups.forEach((meetup) => {
-      const sessionsByDay = meetup.sessions;
-
+      const sessionsByDay = meetup.sessions || {};
       Object.keys(sessionsByDay).forEach((day) => {
         sessionsByDay[day].forEach((session) => {
-          let isMatch = true;
+          const sessionData = {
+            doctorName: meetup.doctorId.doctorName,
+            specialization: meetup.doctorId.specialization,
+            day,
+            date: session.date,
+            startTime: session.startTime,
+            endTime: session.endTime,
+            maxPatients: session.maxPatients,
+            availableSlots: session.availableSlots,
+          };
 
+          allSessions.push(sessionData);
+
+          // Apply filters only for requested date/time
+          let isMatch = true;
           if (date) {
             const sessionDate = new Date(session.date).toISOString().split("T")[0];
             const inputDate = new Date(date).toISOString().split("T")[0];
@@ -138,40 +147,30 @@ exports.querySessions = async (req, res) => {
           }
 
           if (time) {
-           
             const inputTime = time;
             if (!(inputTime >= session.startTime && inputTime <= session.endTime)) {
               isMatch = false;
             }
           }
 
-          if (isMatch) {
-            filteredResults.push({
-              doctorName: meetup.doctorId.doctorName,
-              specialization: meetup.doctorId.specialization,
-              day,
-              date: session.date,
-              startTime: session.startTime,
-              endTime: session.endTime,
-              maxPatients: session.maxPatients,
-            });
-          }
+          if (isMatch) filteredResults.push(sessionData);
         });
       });
     });
 
-    if (!filteredResults.length) {
-      return res
-        .status(404)
-        .json({ message: "No matching sessions found for the given filters" });
-    }
-
-    res.status(200).json({ results: filteredResults });
+    // ✅ Always return 200 — even if no sessions match the filters
+    return res.status(200).json({
+      results: filteredResults, // sessions for requested date/time
+      otherSessions: allSessions, // all sessions for that doctor
+      message:
+        filteredResults.length > 0
+          ? "Matching sessions found."
+          : "Doctor not available on the selected date. Showing other sessions.",
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server Error" });
   }
-
 };
 
 
@@ -205,8 +204,8 @@ exports.reserveSlot = async (req, res) => {
       return hours * 60 + minutes;
     };
 
-    const [reqHours, reqMinutes] = time.split(':').map(Number);
-    const requestedMinutes = reqHours * 60 + reqMinutes;
+    const requestedMinutes = toMinutes(time); // reuse same parser as session times
+
 
     // 4. Find matching session
     const session = sessions.find(s => {
@@ -291,5 +290,77 @@ exports.reserveSlot = async (req, res) => {
       message: "Error reserving slot",
       error: err.message
     });
+  }
+};
+
+
+
+exports.fetchByNameAndSpecialization = async (req, res) => {
+  try {
+ 
+    const { doctorName, specialization } = req.query;
+
+    if (!doctorName && !specialization) {
+      return res
+        .status(400)
+        .json({ message: "Please provide doctor name or specialization." });
+    }
+
+    // Build filter for Doctor model
+    const doctorFilter = {};
+    if (doctorName) doctorFilter.doctorName = { $regex: doctorName, $options: "i" };
+    if (specialization)
+      doctorFilter.specialization = { $regex: specialization, $options: "i" };
+
+    // Find doctors
+    const doctors = await Doctor.find(
+      doctorFilter,
+      "_id doctorName specialization"
+    );
+
+    if (!doctors.length) {
+      return res.status(404).json({ message: "No matching doctors found." });
+    }
+
+    const doctorIds = doctors.map((doc) => doc._id);
+
+    // Find all sessions for those doctors
+    const meetups = await DocorMeetups.find({
+      doctorId: { $in: doctorIds },
+    }).populate("doctorId", "_id doctorName specialization");
+
+
+    if (!meetups.length) {
+      return res
+        .status(404)
+        .json({ message: "No sessions found for selected doctors." });
+    }
+
+    // Collect sessions in consistent structure
+    const allSessions = [];
+
+    meetups.forEach((meetup) => {
+      const sessionsByDay = meetup.sessions || {};
+      Object.keys(sessionsByDay).forEach((day) => {
+        sessionsByDay[day].forEach((session) => {
+          allSessions.push({
+            doctorName: meetup.doctorId.doctorName,
+            specialization: meetup.doctorId.specialization,
+            doctorId: meetup.doctorId?._id || meetup.doctorId,
+            day,
+            date: session.date,
+            startTime: session.startTime,
+            endTime: session.endTime,
+            maxPatients: session.maxPatients,
+            availableSlots: session.availableSlots || 0, // optional safety
+          });
+        });
+      });
+    });
+
+    res.status(200).json(allSessions);
+  } catch (err) {
+    console.error("Error fetching sessions:", err);
+    res.status(500).json({ error: "Server error while fetching sessions." });
   }
 };
