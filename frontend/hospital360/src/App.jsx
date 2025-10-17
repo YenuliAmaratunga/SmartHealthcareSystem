@@ -9,6 +9,10 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/patients" element={<CheckInDashboard />} />
+      <Route path="/patients/:id" element={<PatientDetailsPage />} />
+      <Route path="/patients/register-patient" element={<RegisterPatientFormPage />} />
+      <Route path="/patients/register-temp-patient" element={<TemporaryPatientFormPage />} />
     </Routes>
   );
 }

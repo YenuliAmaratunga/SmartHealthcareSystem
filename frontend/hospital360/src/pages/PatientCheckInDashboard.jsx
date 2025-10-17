@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUserPlus, FaUserClock, FaQrcode, FaChevronDown, FaChevronUp, FaClock } from "react-icons/fa";
+import {
+  FaUserPlus,
+  FaUserClock,
+  FaQrcode,
+  FaChevronDown,
+  FaChevronUp,
+  FaClock,
+  FaKeyboard,
+  FaTimes,
+  FaSearch,
+} from "react-icons/fa";
 import AppLayout from "../components/GenericComponents/AppLayout";
 import ScanQRCode from "../components/PatientComponents/ScanQRCode";
 import RecentAccessLogs from "../components/PatientComponents/RecentAccessLogs";
@@ -8,10 +18,32 @@ import RecentAccessLogs from "../components/PatientComponents/RecentAccessLogs";
 export default function CheckInDashboard() {
   const [patient, setPatient] = useState(null);
   const [showLogs, setShowLogs] = useState(false);
+  const [manualEntry, setManualEntry] = useState(false);
+  const [patientIdInput, setPatientIdInput] = useState("");
   const navigate = useNavigate();
 
   const cardClasses =
     "cursor-pointer rounded-2xl p-6 flex flex-col items-center justify-center shadow-lg transition-transform transform hover:-translate-y-1 hover:shadow-2xl text-white";
+
+  const handleManualSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!patientIdInput.trim()) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:5001/api/patients/by-id/${patientIdInput}`
+      );
+      if (!res.ok) throw new Error("Patient not found");
+      const data = await res.json();
+
+      navigate(`/patients/${data.patientId}`, { state: { patient: data } });
+      setManualEntry(false);
+      setPatientIdInput("");
+    } catch (err) {
+      alert("❌ Patient not found. Please check the ID and try again.");
+    }
+  };
 
   return (
     <AppLayout>
@@ -61,8 +93,50 @@ export default function CheckInDashboard() {
                 }}
               />
             </div>
+
+            {/* --- Manual Entry Button --- */}
+            <button
+              onClick={() => setManualEntry(true)}
+              className="mt-4 bg-white text-green-700 font-semibold py-2 px-4 rounded-xl shadow hover:bg-green-50 flex items-center gap-2 transition"
+            >
+              <FaKeyboard /> Enter Patient ID Manually
+            </button>
           </div>
         </div>
+
+        {/* --- Manual Entry Modal --- */}
+        {manualEntry && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative animate-fadeIn">
+              <button
+                onClick={() => setManualEntry(false)}
+                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+              >
+                <FaTimes />
+              </button>
+
+              <h2 className="text-lg font-semibold text-center text-gray-800 mb-4">
+                🔍 Enter Patient ID
+              </h2>
+
+              <form onSubmit={handleManualSubmit} className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="e.g. P9663"
+                  value={patientIdInput}
+                  onChange={(e) => setPatientIdInput(e.target.value)}
+                  className="w-full border border-gray-300 rounded-xl px-3 py-2 text-gray-700 focus:ring-2 focus:ring-green-400 outline-none"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-xl flex justify-center items-center gap-2 transition"
+                >
+                  <FaSearch /> Find Patient
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* --- Scanned Patient Info --- */}
         {patient && (
@@ -87,9 +161,7 @@ export default function CheckInDashboard() {
               </h2>
             </div>
 
-            <button
-              className="flex items-center gap-1 text-gray-600 hover:text-gray-800 transition"
-            >
+            <button className="flex items-center gap-1 text-gray-600 hover:text-gray-800 transition">
               {showLogs ? (
                 <>
                   <span>Hide</span> <FaChevronUp />

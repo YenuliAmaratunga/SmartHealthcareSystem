@@ -66,3 +66,17 @@ export const registerTemporaryPatient = async (data, staffId) => {
 export const getRecentAccessLogs = async (limit = 10) => {
   return await AccessLog.find().sort({ timestamp: -1 }).limit(limit);
 };
+
+export const getPatientById = async (patientId, staffId) => {
+  const patient = await Patient.findOne({ patientId });
+
+  await AccessLog.create({
+    staffId,
+    patientId,
+    accessType: "SCAN",
+    status: patient ? "SUCCESS" : "FAILED",
+    message: patient ? "Record retrieved manually" : "Patient not found",
+  });
+
+  return patient;
+};

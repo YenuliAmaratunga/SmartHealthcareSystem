@@ -1,4 +1,4 @@
-import { registerPatient, findPatientByQR, registerTemporaryPatient, getRecentAccessLogs  } from "../services/patientService.js";
+import { registerPatient, findPatientByQR, registerTemporaryPatient, getRecentAccessLogs, getPatientById } from "../services/patientService.js";
 
 export const handleRegisterPatient = async (req, res) => {
   try {
@@ -46,6 +46,23 @@ export const handleGetAccessLogs = async (req, res) => {
   } catch (error) {
     console.error("Error fetching access logs:", error);
     res.status(500).json({ message: "Error fetching access logs" });
+  }
+};
+
+export const handleGetPatientById = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const staffId = req.user?.id || "STF-001";
+    const patient = await getPatientById(patientId, staffId);
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json(patient);
+  } catch (error) {
+    console.error("Error retrieving patient:", error);
+    res.status(500).json({ message: "Error retrieving patient" });
   }
 };
 
