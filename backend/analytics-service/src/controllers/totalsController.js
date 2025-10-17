@@ -19,28 +19,44 @@ function computeRevenue(appt) {
 
 export async function getTotals(req, res) {
   try {
+    // NEW: optional range
+    const { from, to } = req.query;
+    const fromD = from ? new Date(from) : null;
+    const toD   = to   ? new Date(to)   : null;
+
     const [patients, doctors, appts] = await Promise.all([
       getAllPatients(),
       getAllDoctors(),
       getAllAppointments(),
     ]);
 
+    const inRange = (a) => {
+      const d = a?.sessionDate ? new Date(a.sessionDate) : null;
+      if (!d || Number.isNaN(d)) return false;
+      if (fromD && d < fromD) return false;
+      if (toD   && d > toD)   return false;
+      return true;
+    };
+
+    // If a range is provided, only use appointments in that range
+    const sourceAppts = (fromD || toD) ? appts.filter(inRange) : appts;
+
     const now = new Date();
-    const upcomingAppointments = appts.filter(a => {
+    const upcomingAppointments = sourceAppts.filter(a => {
       const d = a?.sessionDate ? new Date(a.sessionDate) : null;
       return d && d >= now;
     }).length;
 
-    const scheduledRevenue = appts.reduce((sum, a) => sum + computeRevenue(a), 0);
+    const scheduledRevenue = sourceAppts.reduce((sum, a) => sum + computeRevenue(a), 0);
 
-    res.status(200).json({
-      totalPatients: patients.length,
-      totalPractitioners: doctors.length,
-      upcomingAppointments,
-      scheduledRevenue
+    return res.status(200).json({
+      totalPatients: patients.length,        
+      totalPractitioners: doctors.length,    
+      upcomingAppointments,                  
+      scheduledRevenue                      
     });
   } catch (err) {
     console.error("getTotals error:", err?.message || err);
-    res.status(500).json({ message: "Failed to compute totals" });
+    return res.status(500).json({ message: "Failed to compute totals" });
   }
 }
